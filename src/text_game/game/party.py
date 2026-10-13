@@ -1,35 +1,57 @@
-from text_game.models.player import PlayerHero, Companion
-from text_game.models.character import Character
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from text_game.models.companion import Companion
+from text_game.models.player import PlayerHero
+
+if TYPE_CHECKING:
+    from text_game.models.enemies import EnemyParty
+
 
 class Party():
     def __init__(self, leader: PlayerHero) -> None:
         self.leader = leader
-        self.members = []
+        self.members: list[Companion | PlayerHero] = []
         self.members.append(self.leader)
 
-    def add_member(self, member: Companion):
-        if len(self.members) < 4:
+    def add_member(self, member: Companion | PlayerHero):
+        if len(self.members) <= 3:
             self.members.append(member)
+            return f'{member.name} was added to the party'
+        
+        return 'The party is full!'
 
-    def remove_member(self, member: Companion):
-        if member is self.leader:
+    def remove_member(self, member_name: str):
+        if member_name == self.leader.name:
             return 'Party leader cannot be removed'
 
-        if member in self.members:
-            self.members.remove(member)
-        else:
-            return 'Party member does not exist'
-
-        return f'{member} has been removed from the party'
+        for member in self.members:
+            if member_name == member.name:
+                self.members.remove(member)
+                return f'{member.name} has been removed from the party'
+        return 'Party member does not exist'
 
     def get_party_members_state(self):
-        status = None
+        status = ''
         for member in self.members:
             if member.is_alive():
                 status = 'Alive'
             else:
                 status = 'Injured'
-            print(f'Party member: {member.name}\n Status: {status}')
+            print(f'Name: {member.name}\nStatus: {status}')
+
+    def __add__(self, other:EnemyParty):
+        return self.members + other.enemy_party
+
+    def __iter__(self):
+        return iter(self.members)
+
+    def __repr__(self) -> str:
+        party_list = []
+        for member in self.members:
+            party_list.append(member.name)
+        return f'Party:\n{party_list}'
 
     def is_defeated(self):
         pass

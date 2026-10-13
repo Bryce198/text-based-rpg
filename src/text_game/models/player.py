@@ -15,11 +15,11 @@ PLAYER_CLASSES = {
         "defense": 5,
         "speed": 9
     },
-    "Ranger": {
+    "Rogue": {
         "health": 100,
-        "attack": 18,
-        "defense": 12,
-        "speed": 10
+        "attack": 12,
+        "defense": 9,
+        "speed": 14
     }
 }
 
@@ -29,63 +29,54 @@ class Hero(Character):
         self.exp = 0
         self.to_next_level = 25
         self.role = role
+        self.equipment = {}
 
     def level_up(self):
         self.level += 1
         self.to_next_level *= 2
-        self.health *= (self.level // 2)
-        self.attack_power *= (self.level // 2)
-        self.defense *= (self.level // 2)
-        self.speed *= (self.level // 2)
+
+        self.max_health += 10
+        self.health += 10
+        self.attack_power += 6
+        self.defense += 3
+        self.speed += 1
         
 
     def gain_exp(self, exp):
+        if exp < 0:
+            raise ValueError('Experience cannot be negative')
         self.exp += exp
+        while self.exp >= self.to_next_level:
+            self.exp -= self.to_next_level
+            self.level_up()
+            print(f'{self.name} leveled up to {self.level}!')
+            print(f'New stats:\nAttack: {self.attack_power}\nDefense: {self.defense}\nSpeed: {self.speed}\nHealth: {self.max_health}')
+
 
     def attack(self, target):
         if not target.is_alive():
             print(f"{target.name} has already been defeated")
-            return None
+            return 0
         
         damage = super().attack(target)
-        super().attack(target)
         if not target.is_alive():
             self.gain_exp(target.exp_drop)
             print(f'{target.name} has been defeated')
-            while self.exp >= self.to_next_level:
-                self.level_up()
-                print(f"{self.name} has leveled up!")
-                print(f'Exp needed for next levelup: {self.to_next_level}')
 
-        return {
-            "attacker": self.name,
-            "target": target.name,
-            "damage": damage
-        }
+        return damage
 
     def is_alive(self):
         return super().is_alive()
 
     def __repr__(self) -> str:
-        return super().__repr__()
-
-
-class Companion(Hero):
-    def __init__(self, name: str, health: int, attack_power: int, defense: int, level: int, speed: int, role: str) -> None:
-        super().__init__(name, health, attack_power, defense, level, speed, role)
-        self.equipment = {}
-        self.exp = 0
-        self.to_next_level = 25
+        return f'Name: {self.name}\nRole({self.role})\nLevel: {self.level}'
         
 
 class PlayerHero(Hero):
     def __init__(self, name: str, health: int, attack_power: int, defense: int, level: int, speed: int, role: str) -> None:
         super().__init__(name, health, attack_power, defense, level, speed, role)
-        self.exp = 0
-        self.to_next_level = 25
         self.gold = 0
         self.inventory = []
-        self.equipment = {}
         
 
 
