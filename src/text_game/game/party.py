@@ -14,23 +14,43 @@ class Party():
         self.leader = leader
         self.members: list[Companion | PlayerHero] = []
         self.members.append(self.leader)
+        self.reserves = []
 
     def add_member(self, member: Companion | PlayerHero):
         if len(self.members) <= 3:
             self.members.append(member)
-            return f'{member.name} was added to the party'
+            print(f'{member.name} was added to the party')
+            return
+        print(f'Party is Full!, {member.name} is being moved to reserves.')
+        self.reserves.append(member)
+        return
         
-        return 'The party is full!'
 
-    def remove_member(self, member_name: str):
+    def remove_member(self):
+        party_list = []
+        for party_member in self.members:
+            party_list.append(party_member.name)
+        member_name = input(f'Which party member do you want to remove:\n{party_list}\n>')
         if member_name == self.leader.name:
-            return 'Party leader cannot be removed'
-
+            print('Party leader cannot be removed')
+            return
         for member in self.members:
             if member_name == member.name:
                 self.members.remove(member)
-                return f'{member.name} has been removed from the party'
-        return 'Party member does not exist'
+                print(f'{member.name} has been removed from the party')
+                return
+        print('Party member does not exist')
+        return
+
+    def swap_from_reserves(self):
+        member = input('Which member do you want to swap?')
+        
+        for party_member in self.members:
+            if member not in party_member.name:
+                print('Member not found in party')
+            else:
+                pass
+            
 
     def get_party_members_state(self):
         status = ''
@@ -54,4 +74,13 @@ class Party():
         return f'Party:\n{party_list}'
 
     def is_defeated(self):
-        pass
+        alive_list = []
+        defeated = False
+        for member in self.members:
+            if member.is_alive():
+                alive_list.append(member)
+
+        if len(alive_list) == 0:
+            defeated = True
+
+        return defeated

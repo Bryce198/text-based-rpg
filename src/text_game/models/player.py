@@ -39,7 +39,7 @@ class Hero(Character):
         self.health += 10
         self.attack_power += 6
         self.defense += 3
-        self.speed += 1
+        self.speed += 4
         
 
     def gain_exp(self, exp):
@@ -50,7 +50,8 @@ class Hero(Character):
             self.exp -= self.to_next_level
             self.level_up()
             print(f'{self.name} leveled up to {self.level}!')
-            print(f'New stats:\nAttack: {self.attack_power}\nDefense: {self.defense}\nSpeed: {self.speed}\nHealth: {self.max_health}')
+            print(f'New stats:\n\nAttack: {self.attack_power}\nDefense: {self.defense}\nSpeed: {self.speed}\nHealth: {self.max_health}')
+            print(f'To next level: {self.to_next_level}\n')
 
 
     def attack(self, target):
@@ -61,7 +62,7 @@ class Hero(Character):
         damage = super().attack(target)
         if not target.is_alive():
             self.gain_exp(target.exp_drop)
-            print(f'{target.name} has been defeated')
+            print(f'{target.name} has been defeated!')
 
         return damage
 
