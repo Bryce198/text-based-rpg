@@ -5,7 +5,7 @@
 # This is the base character model that all game 
 # characters inherit from.
 class Character:
-    def __init__(self, name: str, health: int, attack_power: int, defense: int, level: int, speed: int) -> None:
+    def __init__(self, name: str, health: int, mp: int, attack_power: int, defense: int, level: int, speed: int, move_list: list) -> None:
         self.name = name
         self.health = health
         self.max_health = health
@@ -13,6 +13,9 @@ class Character:
         self.defense = defense
         self.level = level
         self.speed = speed
+        self.mp = mp
+        self.max_mp = mp
+        move_list = []
 
         self.character_turn = False
 
@@ -43,5 +46,5 @@ class Character:
         self.health = min(self.max_health, self.health + max(0, amount))
 
     def __repr__(self) -> str:
-        return f"name: {self.name}, health: {self.health}/{self.max_health}, level: {self.level}"
+        return f"name: {self.name}\nhealth: {self.health}/{self.max_health}\nmp: {self.mp}/{self.max_mp}\nlevel: {self.level}"
 

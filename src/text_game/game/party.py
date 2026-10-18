@@ -36,21 +36,45 @@ class Party():
             return
         for member in self.members:
             if member_name == member.name:
+                self.reserves.append(member)
                 self.members.remove(member)
+                print([reserve.name for reserve in self.reserves])
                 print(f'{member.name} has been removed from the party')
                 return
         print('Party member does not exist')
         return
 
     def swap_from_reserves(self):
-        member = input('Which member do you want to swap?')
+        player_party = [member.name for member in self.members]
+        reserves_list = [reserve.name for reserve in self.reserves]
         
-        for party_member in self.members:
-            if member not in party_member.name:
-                print('Member not found in party')
-            else:
-                pass
-            
+
+        member = input(f'Which member do you want to swap?\n{player_party}\n>')
+        if member not in player_party:
+            print(f'Member not found. pick a member from the list:\n{player_party}')
+            return
+        if member == self.leader.name:
+            print('Party leader cannot be removed from the party.')
+            return
+
+        swapped = input(f'Which member do you want to swap for?\n{reserves_list}\n>')
+        if swapped not in reserves_list:
+            print(f'Reserve member not found. pick a member from the list:\n{reserves_list}')
+            return
+
+        member_index = player_party.index(member)
+        reserve_index = reserves_list.index(swapped)
+
+        self.swap_member(member_index, reserve_index)
+
+        print(f'{self.members[member_index]} \n\nwas swapped with\n\n{self.reserves[reserve_index]}\n')
+        print(self)
+        return
+
+    def swap_member(self, member_index: int, reserve_index: int):
+        self.members[member_index], self.reserves[reserve_index] = (
+            self.reserves[reserve_index], self.members[member_index]
+        )
 
     def get_party_members_state(self):
         status = ''

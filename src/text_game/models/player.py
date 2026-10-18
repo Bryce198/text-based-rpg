@@ -2,30 +2,9 @@ from text_game.models.character import Character
 from text_game.models.enemies import Enemy
 import random
 
-PLAYER_CLASSES = {
-    'Warrior': {
-        "health": 150,
-        "attack": 25,
-        "defense": 15,
-        "speed": 12
-    },
-    "Mage": {
-        "health": 80,
-        "attack": 20,
-        "defense": 5,
-        "speed": 9
-    },
-    "Rogue": {
-        "health": 100,
-        "attack": 12,
-        "defense": 9,
-        "speed": 14
-    }
-}
-
 class Hero(Character):
-    def __init__(self, name: str, health: int, attack_power: int, defense: int, level: int, speed: int, role: str) -> None:
-        super().__init__(name, health, attack_power, defense, level, speed)  # Assuming a default defense value for human class
+    def __init__(self, name: str, health: int, mp: int, attack_power: int, defense: int, level: int, speed: int, role: str, move_list: list) -> None:
+        super().__init__(name, health, mp, attack_power, defense, level, speed, move_list)
         self.exp = 0
         self.to_next_level = 25
         self.role = role
@@ -58,6 +37,7 @@ class Hero(Character):
         if not target.is_alive():
             print(f"{target.name} has already been defeated")
             return 0
+
         
         damage = super().attack(target)
         if not target.is_alive():
@@ -74,8 +54,8 @@ class Hero(Character):
         
 
 class PlayerHero(Hero):
-    def __init__(self, name: str, health: int, attack_power: int, defense: int, level: int, speed: int, role: str) -> None:
-        super().__init__(name, health, attack_power, defense, level, speed, role)
+    def __init__(self, name: str, health: int, mp: int, attack_power: int, defense: int, level: int, speed: int, role: str) -> None:
+        super().__init__(name, health, mp, attack_power, defense, level, speed, role, move_list=[])
         self.gold = 0
         self.inventory = []
         
