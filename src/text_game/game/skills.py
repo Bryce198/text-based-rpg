@@ -27,8 +27,6 @@ class DamageSkill(Skill):
         print(f'{user.name} uses {self.name} on {target.name} for {damage} damage!')
         return
 
-    def show_info(self):
-        return super().show_info()
 
 class HealingSkill(Skill):
     def __init__(self, name: str, mp_cost: int, description: str, healing_amount: int):
@@ -43,4 +41,5 @@ class HealingSkill(Skill):
         target.heal(self.healing_amount)
         print(f'{target.name} was healed for {self.healing_amount} hp!')
         return
-        
+
+cut = DamageSkill('cut', 5, 'The user cuts the target with a blade', 10)

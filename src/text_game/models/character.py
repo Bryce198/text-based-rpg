@@ -15,7 +15,7 @@ class Character:
         self.speed = speed
         self.mp = mp
         self.max_mp = mp
-        move_list = []
+        move_list = move_list
 
         self.character_turn = False
 

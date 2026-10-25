@@ -3,6 +3,7 @@ from text_game.models.companion import Companion
 from text_game.game.party import Party
 from text_game.utils.display_menu import display_title_menu
 from text_game.models.enemies import Enemy
+from text_game.game.skills import cut
 
 
 def main():
@@ -14,7 +15,11 @@ def main():
     mike = Companion('Mike', 120, 15, 10, 10, 1, 20, 'Paladin')
     gorm = Enemy('Gobbie', 10, 10, 5, 0, 1, 5, 200)
     lisire = Companion('Lisire', 100, 40, 20, 30, 1, 20, 'Mage')
-    print(bryce)
+    party = Party(bryce)
+    bryce.move_list.append(cut)
+    bryce.execute_command(gorm)
+    print(gorm)
+    
     
 
 
