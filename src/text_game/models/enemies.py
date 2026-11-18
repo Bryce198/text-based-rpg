@@ -12,13 +12,26 @@ class Enemy(Character):
         super().__init__(name, health, mp, attack_power, defense, level, speed, move_list=[])
         self.exp_drop = exp_drop
 
+    def use_ai_command(self, target):
+            print(f'{self.name}\'s turn!')
+            if target is None:
+                print('No target selected')
+                return
+            if not target.is_alive():
+                return
+            if not self.is_alive():
+                print(f'{self.name} is knocked out!')
+                return
+            self.attack(target)
+            return
+
 
 class EnemyParty():
-    def __init__(self, enemy_party: list[Enemy]):
-        self.enemy_party = enemy_party
+    def __init__(self):
+        self.ep = []
 
-    def __add__(self, other: Party):
-        return self.enemy_party + other.members
+    def add_to_party(self, enemy: Enemy):
+        pass
 
-    
-        
+    def __iter__(self):
+        return iter(self.ep)

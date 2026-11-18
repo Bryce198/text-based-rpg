@@ -85,8 +85,6 @@ class Party():
                 status = 'Injured'
             print(f'Name: {member.name}\nStatus: {status}')
 
-    def __add__(self, other:EnemyParty):
-        return self.members + other.enemy_party
 
     def __iter__(self):
         return iter(self.members)

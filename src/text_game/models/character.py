@@ -28,6 +28,7 @@ class Character:
     def attack(self, target) -> int:
         if not self.is_alive() or not target.is_alive():
             return 0
+        print(f'{self.name} attacks {target.name}')
         return target.take_damage(self.attack_power)
         
     def is_turn(self) -> bool:

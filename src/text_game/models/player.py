@@ -2,16 +2,20 @@ from text_game.models.character import Character
 from text_game.models.enemies import Enemy
 import random
 import questionary
+from questionary import Choice
 from ..game.skills import DamageSkill, HealingSkill
+from ..game.items import DamageItem, HealingItem
 
 class Hero(Character):
-    def __init__(self, name: str, health: int, mp: int, attack_power: int, defense: int, level: int, speed: int, role: str, move_list: list[HealingSkill | DamageSkill]) -> None:
+    def __init__(self, name: str, health: int, mp: int, attack_power: int, defense: int, level: int, 
+                 speed: int, role: str, move_list: list[HealingSkill | DamageSkill], inventory: list[DamageItem | HealingItem]) -> None:
         super().__init__(name, health, mp, attack_power, defense, level, speed, move_list)
         self.exp = 0
         self.to_next_level = 25
         self.role = role
         self.equipment = {}
         self.move_list = move_list
+        self.inventory = inventory
 
     def level_up(self):
         self.level += 1
@@ -22,7 +26,12 @@ class Hero(Character):
         self.attack_power += 6
         self.defense += 3
         self.speed += 4
-        
+
+    def select_enemy(self, enemy_list: list["Enemy"]):
+        choices = [Choice(title=f'{enemy.name}',
+                          value=enemy) for enemy in enemy_list]
+        return questionary.select("Choose the enemy to attack",
+                                  choices=choices).ask() 
 
     def gain_exp(self, exp):
         if exp < 0:
@@ -50,27 +59,33 @@ class Hero(Character):
         return damage
 
     def get_battle_command(self):
-        return questionary.select(f'{self.name}\'s turn, what will you do?', 
+        return questionary.select(f'What will {self.name} do?', 
                                   choices=['Attack', 'Defend', 'Use Skill', 'Inventory', 'Run Away']).ask()
 
     def select_skill(self):
-        move_name_list = []
-        for move in self.move_list:
-            move_name_list.append(move.name)
-
-        return questionary.select(f'What skill would you like to use?', 
-                                  choices=move_name_list).ask()
+        choices = [Choice(title=f'{skill.name}',
+                          value=skill) for skill in self.move_list]
+        return questionary.select(f'What skill will {self.name} use?', 
+                                  choices=choices).ask()
 
     def use_skill(self, target):
         skill = self.select_skill()
-        for move in self.move_list:
-            if move.name == skill:
-                move.use_skill(self, target)
-                if not target.is_alive():
-                    self.gain_exp(target.exp_drop)
+        skill.use_skill(self, target)
+
+    def select_item(self):
+        choices = [Choice(title=f'{item.name}',
+                          value=item) for item in self.inventory]
+        return questionary.select(f'What item will {self.name} use?',
+                                  choices=choices).ask()
+
+    def use_item(self, target):
+        item = self.select_item()
+        item.use_item(self, target)
 
     def execute_command(self, target):
         command = self.get_battle_command()
+        print(self.move_list)
+        print(self.inventory)
         if command == 'Attack':
             self.attack(target)
             return
@@ -79,8 +94,20 @@ class Hero(Character):
             print(f'{self.name} is defending!')
             return
         elif command == 'Use Skill':
+            print(f'Skills available: {len(self.move_list)}')
+            if len(self.move_list) == 0:
+                print(f'{self.name} has no moves to use!')
+                return
             self.use_skill(target)
-            return 
+            return
+        elif command == 'Inventory':
+            print(f'Items available: {len(self.inventory)}')
+            if len(self.inventory) == 0:
+                print(f'{self.name} has no items in inventory!')
+                return
+            self.use_item(target)
+            return
+        
     
     def is_alive(self):
         return super().is_alive()
@@ -89,13 +116,9 @@ class Hero(Character):
         return f'Name: {self.name}\nRole({self.role})\nLevel: {self.level}'
         
 
+
 class PlayerHero(Hero):
-    def __init__(self, name: str, health: int, mp: int, attack_power: int, defense: int, level: int, speed: int, role: str) -> None:
-        super().__init__(name, health, mp, attack_power, defense, level, speed, role, move_list=[])
-        self.gold = 0
-        self.inventory = []
-        
-
-
-
-
+    def __init__(self, name: str, health: int, mp: int, attack_power: int, defense: int, level: int, speed: int, role: str,
+                 move_list: list[DamageSkill | HealingSkill], inventory: list[DamageItem | HealingItem]) -> None:
+        super().__init__(name, health, mp, attack_power, defense, level, speed, role, move_list, inventory)
+        self.gold = 200
